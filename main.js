@@ -23,6 +23,12 @@ class UITableCell extends HTMLTableCellElement {
 
 customElements.define("ui-table-cell", UITableCell, { extends: "td" });
 
+function createTableCell(state) {
+  const e = document.createElement("td", { is: "ui-table-cell" });
+  e.state = state;
+  return e;
+}
+
 class UITableRow extends HTMLTableRowElement {
   constructor() {
     super();
@@ -45,20 +51,22 @@ class UITableRow extends HTMLTableRowElement {
       this.className = active ? "TableRow active" : "TableRow";
       this.setAttribute("data-id", id);
 
-      const cell0 = new UITableCell();
-      cell0.state = `#${id}`;
-      this.appendChild(cell0);
+      this.appendChild(createTableCell(`#${id}`));
 
       for (let i = 0; i < props.length; i++) {
-        const cell = new UITableCell();
-        cell.state = props[i];
-        this.appendChild(cell);
+        this.appendChild(createTableCell(props[i]));
       }
     }
   }
 }
 
 customElements.define("ui-table-row", UITableRow, { extends: "tr" });
+
+function createTableRow(state) {
+  const e = document.createElement("tr", { is: "ui-table-row" });
+  e.state = state;
+  return e;
+}
 
 class UITable extends HTMLTableElement {
   constructor() {
@@ -83,15 +91,19 @@ class UITable extends HTMLTableElement {
       this._state = v;
 
       for (let i = 0; i < items.length; i++) {
-        const row = new UITableRow();
-        row.state = items[i];
-        this._tbody.appendChild(row);
+        this._tbody.appendChild(createTableRow(items[i]));
       }
     }
   }
 }
 
 customElements.define("ui-table", UITable, { extends: "table" });
+
+function createTable(state) {
+  const e = document.createElement("table", { is: "ui-table" });
+  e.state = state;
+  return e;
+}
 
 class UIAnimBox extends HTMLDivElement {
   constructor() {
@@ -117,6 +129,13 @@ class UIAnimBox extends HTMLDivElement {
 
 customElements.define("ui-anim-box", UIAnimBox, { extends: "div" });
 
+function createAnimBox(state) {
+  const e = document.createElement("div", { is: "ui-anim-box" });
+  e.state = state;
+  return e;
+}
+
+
 class UIAnim extends HTMLDivElement {
   constructor() {
     super();
@@ -137,15 +156,19 @@ class UIAnim extends HTMLDivElement {
       this._state = v;
 
       for (let i = 0; i < items.length; i++) {
-        const box = new UIAnimBox();
-        box.state = items[i];
-        this.appendChild(box);
+        this.appendChild(createAnimBox(items[i]));
       }
     }
   }
 }
 
 customElements.define("ui-anim", UIAnim, { extends: "div" });
+
+function createAnim(state) {
+  const e = document.createElement("div", { is: "ui-anim" });
+  e.state = state;
+  return e;
+}
 
 class UITreeLeaf extends HTMLLIElement {
   constructor() {
@@ -168,6 +191,12 @@ class UITreeLeaf extends HTMLLIElement {
 
 customElements.define("ui-tree-leaf", UITreeLeaf, { extends: "li" });
 
+function createTreeLeaf(state) {
+  const e = document.createElement("li", { is: "ui-tree-leaf" });
+  e.state = state;
+  return e;
+}
+
 class UITreeNode extends HTMLUListElement {
   constructor() {
     super();
@@ -189,15 +218,21 @@ class UITreeNode extends HTMLUListElement {
 
       for (let i = 0; i < children.length; i++) {
         const n = children[i];
-        const el = n.container ? new UITreeNode() : new UITreeLeaf();
-        el.state = n;
-        this.appendChild(el);
+        this.appendChild(n.container ?
+          createTreeNode(n) :
+          createTreeLeaf(n));
       }
     }
   }
 }
 
 customElements.define("ui-tree-node", UITreeNode, { extends: "ul" });
+
+function createTreeNode(state) {
+  const e = document.createElement("ul", { is: "ui-tree-node" });
+  e.state = state;
+  return e;
+}
 
 class UITree extends HTMLDivElement {
   constructor() {
@@ -217,14 +252,18 @@ class UITree extends HTMLDivElement {
       }
       const { root } = v;
       this._state = v;
-      const el = new UITreeNode();
-      el.state = root;
-      this.appendChild(el);
+      this.appendChild(createTreeNode(root));
     }
   }
 }
 
 customElements.define("ui-tree", UITree, { extends: "div" });
+
+function createTree(state) {
+  const e = document.createElement("div", { is: "ui-tree" });
+  e.state = state;
+  return e;
+}
 
 class UIMain extends HTMLDivElement {
   constructor() {
@@ -247,13 +286,11 @@ class UIMain extends HTMLDivElement {
 
       let el;
       if (location === "table") {
-        el = new UITable();
-        el.state = v.table;
+        el = createTable(v.table);
       } else if (location === "anim") {
-        el = new UIAnim();
-        el.state = v.anim;
+        el = createAnim(v.anim);
       } else if (location === "tree") {
-        el = new UITree();
+        el = createTree(v.tree);
         el.state = v.tree;
       }
 
@@ -265,6 +302,12 @@ class UIMain extends HTMLDivElement {
 }
 
 customElements.define("ui-main", UIMain, { extends: "div" });
+
+function createMain(state) {
+  const e = document.createElement("div", { is: "ui-main" });
+  e.state = state;
+  return e;
+}
 
 uibench.init("Vanilla[WC]", "1.0.0");
 
